@@ -1,4 +1,4 @@
-void setup(){
+/*void setup(){
 	// DREHER
 	pinMode(9, OUTPUT);
 	pinMode(8, OUTPUT);
@@ -48,10 +48,11 @@ void setup(){
 
 	Serial.begin(9600);
 	
-	digitalWrite(kipperUp, HIGH);
-	delay(500);
-	digitalWrite(kipperUp, LOW);
+	int move = kipperDown;
+	digitalWrite(move, HIGH);
+	delay(1000);
+	digitalWrite(move, LOW);
 }
 
 void loop () {
-}
+}*/
