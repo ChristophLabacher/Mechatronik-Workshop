@@ -1,59 +1,62 @@
 class Motor	{
 public: 
-  Motor(int _up = 100, int _down = 100, int _left = 100, int _right = 100, int _open = 100, int _close = 100, int _input = A10);
-  void move(String _direction, int _length);
+  Motor(int _minPin = 0, int _maxPin = 0, int _min = 0, int _max = 100, int _input = A1);
+  void move(int _steps);
   int readPosition();
 
 protected:
-  int up;
-  int down;
-  int left;
-  int right;
-  int open;
-  int close;
+  int minPin;
+  int maxPin;
+  int min;
+  int max;
   int input;
+  float stepSize;
+  int currentStep;
 };
 
-Motor::Motor(int _up, int _down, int _left, int _right, int _open, int _close, int _input)	{
-  this->up = _up;
-  this->down = _down;
-  this->left = _left;
-  this->right = _right;
-  this->open = _open;
-  this->close = _close;
+Motor::Motor(int _minPin, int _maxPin, int _min, int _max, int _input)	{
+  this->minPin = _minPin;
+  this->maxPin = _maxPin;
+  this->min = _min;
+  this->max = _max;
   this->input = _input;
+
+  float stepSize_ = (_max - _min) * 0.01;
+  this->stepSize = abs(stepSize_);
 }
 
-void Motor::move(String _direction, int _length)	{
-  int pin = 100;
+void Motor::move(int _steps)	{
+  int stepCount = abs(_steps);
+  int stepDirection = 0;
+  int pin = 0;
 
-  if (_direction == "up")	{
-    pin = this->up;
+  if (_steps < 0)  {
+    stepDirection = -1;
+    pin = this->minPin;
+  } 
+  else {
+    stepDirection = 1;
+    pin = this->maxPin;
   }
 
-  if (_direction == "down")	{
-    pin = this->down;
-  }
+  for (int i = 0; i < stepCount; i++)  {
+    int currentStep = map(this->readPosition(), this->min, this->max, 0, 100);
 
-  if (_direction == "left")	{
-    pin = this->left;	
-  }
+    if (currentStep + stepDirection <= 100 && currentStep + stepDirection >= 0)  {
 
-  if (_direction == "right")	{
-    pin = this->right;	
-  }
+      Serial.print("currentStep: ");
+      Serial.println(currentStep);
+      Serial.print("stepSize: ");
+      Serial.println(stepSize);
 
-  if (_direction == "open")	{
-    pin = this->open;	
-  }
+      digitalWrite(pin, HIGH);
+      delay(100);
+      digitalWrite(pin, LOW);
 
-  if (_direction == "close")	{
-    pin = this->close;	
+      float currentPos = this->readPosition();
+      float targetPos = currentPos + (this->stepSize * stepDirection); 
+    }
   }
-
-  digitalWrite(pin, HIGH);
-  delay(_length);
-  digitalWrite(pin, LOW);
 }
 
 int Motor::readPosition()	{
@@ -86,29 +89,57 @@ void reset()	{
 }
 
 // DREHER
-Motor dreher(0, 0, 8, 9, 0, 0, A4);
+Motor dreher(8, 9, 40, 619, A4);
 
 // VERBINDUNG
-Motor verbindung(6, 7, 0, 0, 0, 0, A3);
+Motor verbindung(6, 7, 555, 328, A3);
 
 // ARM
-Motor arm(5, 4, 0, 0, 0, 0, A2);
+Motor arm(4, 5, 767, 213, A2);
 
 // KIPPER
-Motor kipper(3, 2, 0, 0, 0, 0, A1);
+Motor kipper(2, 3, 93, 990, A1);
 
 // GREIFER
-Motor greifer(0, 0, 0, 0, 1, 0, A0);
+Motor greifer(0, 1, 658, 357, A0);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void setup(){
   reset();
   Serial.begin(9600);
-  dreher.move("right",4000);
+  delay(1000);
+  dreher.move(50);
+  //Serial.println(dreher.readPosition());
+  //
+   digitalWrite(9, HIGH);
+    delay(2000);
+    digitalWrite(9, LOW);
+
 }
 
 void loop () {
-  Serial.println(dreher.readPosition());
+  //int light = analogRead(A5);
+  //Serial.println(light);
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
