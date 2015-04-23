@@ -104,7 +104,7 @@ Motor verbindung(6, 7, 271, 555, A3);
 Motor arm(5, 4, 213, 767, A2);
 
 // KIPPER
-Motor kipper(2, 3, 430, 990, A1);
+Motor kipper(2, 3, 230, 990, A1);
 
 // GREIFER
 //Motor greifer(0, 1, 658, 357, A0);
@@ -115,7 +115,7 @@ void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  verbindung.move(-200);
+  verbindung.move(50);
 
   // digitalWrite(7, HIGH);
   // delay(3000);
@@ -124,7 +124,7 @@ void setup() {
 }
 
 void loop () {
-  // Serial.println(verbindung.readPosition());
+   //Serial.println(kipper.readPosition());
   //int light = analogRead(A5);
   //Serial.println(light);
 
