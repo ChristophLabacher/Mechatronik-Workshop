@@ -1,7 +1,7 @@
 class Motor	{
   public:
     Motor(int _minPin = 0, int _maxPin = 0, int _min = 0, int _max = 100, int _input = A1);
-    void move(int _steps);
+    void move(int _direction);
     int readPosition();
 
   protected:
@@ -25,43 +25,39 @@ Motor::Motor(int _minPin, int _maxPin, int _min, int _max, int _input)	{
   this->stepSize = abs(stepSize_);
 }
 
-void Motor::move(int _steps)	{
-  int stepCount = abs(_steps);
-  int stepDirection = 0;
-  int pin = 0;
+void Motor::move(int _direction)	{
+  if (_direction < 0)  {
+    int pin = this->minPin;
+    int min = this->min;
+    boolean break_ = false;
 
-  if (_steps < 0)  {
-    stepDirection = -1;
-    pin = this->minPin;
-  }
-  else {
-    stepDirection = 1;
-    pin = this->maxPin;
-  }
-
-  for (int i = 0; i < stepCount; i++)  {
-    int currentStep = map(this->readPosition(), this->min, this->max, 0, 100);
-    
-
-    if ((currentStep + stepDirection < 100 && stepDirection == 1) || (currentStep + stepDirection > 0 && stepDirection == -1) && this->readPosition() != 0)  {
-      float currentPos = this->readPosition();
-      float targetPos = currentPos + (this->stepSize * stepDirection);
-
-    Serial.println(currentPos);
-
-      boolean finished = false;
+    while (break_ == false)  {
       digitalWrite(pin, HIGH);
 
-      while (finished == false)	{
-        currentPos = analogRead(this->input);
-        if (abs(currentPos - targetPos) < 1)	{
-          finished = true;
-          digitalWrite(pin, LOW);
-        }
+      if (this->readPosition() <= min)  {
+        break_ = true;
       }
     }
-    
+
     digitalWrite(pin, LOW);
+
+  } else if (_direction > 0) {
+    int pin = this->maxPin;
+    int max = this->max;
+    boolean break_ = false;
+
+    while (break_ == false)  {
+      digitalWrite(pin, HIGH);
+
+      if (this->readPosition() >= max)  {
+        break_ = true;
+      }
+    }
+
+    digitalWrite(pin, LOW);
+
+  } else  {
+    Serial.println("Only -1 or 1 are values that work");
   }
 }
 
@@ -115,34 +111,14 @@ void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  verbindung.move(-300);
- 
+  kipper.move(-1);
+
 }
 
 void loop () {
   //Serial.println(kipper.readPosition());
   //int light = analogRead(A5);
 
- // Serial.println(dreher.readPosition());
+  // Serial.println(dreher.readPosition());
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
