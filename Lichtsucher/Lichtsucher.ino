@@ -1,3 +1,5 @@
+///////////////////////////////////////// Motor ///////////////////////////////////////////////////////
+
 class Motor	{
   public:
     Motor(int _minPin = 0, int _maxPin = 0, int _min = 0, int _max = 100, int _input = A1);
@@ -39,35 +41,36 @@ void Motor::move(int _steps)	{
     pin = this->maxPin;
   }
 
-  for (int i = 0; i < stepCount; i++)  {
-    int currentStep = map(this->readPosition(), this->min, this->max, 0, 100);
+  int currentPos = analogRead(this->input);
+  float targetPos = currentPos + (this->stepSize * _steps);
+  float targetDiff = currentPos - targetPos;
+  float targetDiffAbs = abs(targetDiff);
+
+  while (((currentPos < this->max && stepDirection == 1) || (currentPos > this->min && stepDirection == -1)) && this->readPosition() != 0 && targetDiffAbs > 2.00)  {
+    digitalWrite(pin, HIGH);
+    currentPos = analogRead(this->input);
+    targetDiff = currentPos - targetPos;
+    targetDiffAbs = abs(targetDiff);
     
-
-    if ((currentStep + stepDirection < 100 && stepDirection == 1) || (currentStep + stepDirection > 0 && stepDirection == -1) && this->readPosition() != 0)  {
-      float currentPos = this->readPosition();
-      float targetPos = currentPos + (this->stepSize * stepDirection);
-
+    Serial.print("currentPos ");
     Serial.println(currentPos);
-
-      boolean finished = false;
-      digitalWrite(pin, HIGH);
-
-      while (finished == false)	{
-        currentPos = analogRead(this->input);
-        if (abs(currentPos - targetPos) < 1)	{
-          finished = true;
-          digitalWrite(pin, LOW);
-        }
-      }
-    }
-    
-    digitalWrite(pin, LOW);
+    Serial.print("targetPos ");
+    Serial.println(targetPos);
+    Serial.print("targetDiff ");
+    Serial.println(targetDiff);
+    Serial.print("targetDiffAbs ");
+    Serial.println(targetDiffAbs);
+    Serial.println("---");
   }
+
+  digitalWrite(pin, LOW);
 }
 
 int Motor::readPosition()	{
   return analogRead(this->input);
 }
+
+///////////////////////////////////////// reset ///////////////////////////////////////////////////////
 
 void reset()	{
   pinMode(9, OUTPUT);
@@ -94,6 +97,8 @@ void reset()	{
   digitalWrite(0, LOW);
 }
 
+///////////////////////////////////////// init ///////////////////////////////////////////////////////
+
 // DREHER
 Motor dreher(9, 8, 20, 400, A4);
 
@@ -109,40 +114,16 @@ Motor kipper(2, 3, 280, 850, A1);
 // GREIFER
 //Motor greifer(0, 1, 658, 357, A0);
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// setup & draw ///////////////////////////////////////////////////////
 
 void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  verbindung.move(-300);
- 
+
+  kipper.move(-50);
 }
 
 void loop () {
-  //Serial.println(kipper.readPosition());
-  //int light = analogRead(A5);
-
- // Serial.println(dreher.readPosition());
-
+  // Serial.println(dreher.readPosition());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
