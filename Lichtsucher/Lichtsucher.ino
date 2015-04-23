@@ -41,27 +41,27 @@ void Motor::move(int _steps)	{
 
   for (int i = 0; i < stepCount; i++)  {
     int currentStep = map(this->readPosition(), this->min, this->max, 0, 100);
+    
 
-    if (currentStep + stepDirection <= 100 && currentStep + stepDirection >= 0)  {
+    if ((currentStep + stepDirection < 100 && stepDirection == 1) || (currentStep + stepDirection > 0 && stepDirection == -1) && this->readPosition() != 0)  {
       float currentPos = this->readPosition();
       float targetPos = currentPos + (this->stepSize * stepDirection);
+
+    Serial.println(currentPos);
 
       boolean finished = false;
       digitalWrite(pin, HIGH);
 
       while (finished == false)	{
         currentPos = analogRead(this->input);
-
-        Serial.println(currentPos - targetPos);
-        Serial.println("---");
-
-
         if (abs(currentPos - targetPos) < 1)	{
           finished = true;
           digitalWrite(pin, LOW);
         }
       }
     }
+    
+    digitalWrite(pin, LOW);
   }
 }
 
@@ -95,16 +95,16 @@ void reset()	{
 }
 
 // DREHER
-Motor dreher(9, 8, 40, 619, A4);
+Motor dreher(9, 8, 20, 400, A4);
 
 // VERBINDUNG
-Motor verbindung(6, 7, 271, 555, A3);
+Motor verbindung(7, 6, 320, 490, A3);
 
 // ARM
-Motor arm(5, 4, 213, 767, A2);
+Motor arm(5, 4, 240, 500, A2);
 
 // KIPPER
-Motor kipper(2, 3, 230, 990, A1);
+Motor kipper(2, 3, 280, 850, A1);
 
 // GREIFER
 //Motor greifer(0, 1, 658, 357, A0);
@@ -115,18 +115,15 @@ void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  verbindung.move(50);
-
-  // digitalWrite(7, HIGH);
-  // delay(3000);
-  // digitalWrite(7, LOW);
-
+  verbindung.move(-300);
+ 
 }
 
 void loop () {
-   //Serial.println(kipper.readPosition());
+  //Serial.println(kipper.readPosition());
   //int light = analogRead(A5);
-  //Serial.println(light);
+
+ // Serial.println(dreher.readPosition());
 
 }
 
