@@ -121,9 +121,31 @@ void setup() {
   Serial.begin(9600);
   delay(1000);
 
-  kipper.move(-50);
+  //kipper.move(-50);
 }
 
+char value;
+int movement = 20;
+
 void loop () {
-  // Serial.println(dreher.readPosition());
+  char buffer;
+
+  while (Serial.available () > 0) {
+    //read the incoming byte:
+    byte incomingByte = Serial.read();
+
+    if (incomingByte != '-')  {
+      // Add to buffer
+      buffer += incomingByte;
+    } else  {
+      value = buffer;
+  
+    }
+  }
+  
+  if (value == 'r')  {
+    kipper.move(movement);
+    movement *= -1;
+  }
+  Serial.println(value);
 }
