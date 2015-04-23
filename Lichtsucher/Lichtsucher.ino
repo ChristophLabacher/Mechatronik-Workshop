@@ -1,3 +1,5 @@
+///////////////////////////////////////// Motor ///////////////////////////////////////////////////////
+
 class Motor	{
   public:
     Motor(int _minPin = 0, int _maxPin = 0, int _min = 0, int _max = 100, int _input = A1);
@@ -33,37 +35,27 @@ void Motor::move(int _direction)	{
 
     while (break_ == false)  {
       digitalWrite(pin, HIGH);
+      
+  int currentPos = analogRead(this->input);
+  float targetPos = currentPos + (this->stepSize * _steps);
+  float targetDiff = currentPos - targetPos;
+  float targetDiffAbs = abs(targetDiff);
 
-      if (this->readPosition() <= min)  {
-        break_ = true;
-      }
-    }
-
-    digitalWrite(pin, LOW);
-
-  } else if (_direction > 0) {
-    int pin = this->maxPin;
-    int max = this->max;
-    boolean break_ = false;
-
-    while (break_ == false)  {
-      digitalWrite(pin, HIGH);
-
-      if (this->readPosition() >= max)  {
-        break_ = true;
-      }
-    }
-
-    digitalWrite(pin, LOW);
-
-  } else  {
-    Serial.println("Only -1 or 1 are values that work");
+  while (((currentPos < this->max && stepDirection == 1) || (currentPos > this->min && stepDirection == -1)) && this->readPosition() != 0 && targetDiffAbs > 2.00)  {
+    digitalWrite(pin, HIGH);
+    currentPos = analogRead(this->input);
+    targetDiff = currentPos - targetPos;
+    targetDiffAbs = abs(targetDiff);
   }
+
+  digitalWrite(pin, LOW);
 }
 
 int Motor::readPosition()	{
   return analogRead(this->input);
 }
+
+///////////////////////////////////////// reset ///////////////////////////////////////////////////////
 
 void reset()	{
   pinMode(9, OUTPUT);
@@ -90,6 +82,8 @@ void reset()	{
   digitalWrite(0, LOW);
 }
 
+///////////////////////////////////////// init ///////////////////////////////////////////////////////
+
 // DREHER
 Motor dreher(9, 8, 20, 400, A4);
 
@@ -105,20 +99,15 @@ Motor kipper(2, 3, 280, 850, A1);
 // GREIFER
 //Motor greifer(0, 1, 658, 357, A0);
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////// setup & draw ///////////////////////////////////////////////////////
 
 void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  kipper.move(-1);
 
 }
 
 void loop () {
-  //Serial.println(kipper.readPosition());
-  //int light = analogRead(A5);
-
-  // Serial.println(dreher.readPosition());
 
 }
