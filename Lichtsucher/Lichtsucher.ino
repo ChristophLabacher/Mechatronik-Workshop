@@ -41,10 +41,13 @@ void Motor::move(int _steps)	{
 
   for (int i = 0; i < stepCount; i++)  {
     int currentStep = map(this->readPosition(), this->min, this->max, 0, 100);
+    
 
     if ((currentStep + stepDirection < 100 && stepDirection == 1) || (currentStep + stepDirection > 0 && stepDirection == -1) && this->readPosition() != 0)  {
       float currentPos = this->readPosition();
       float targetPos = currentPos + (this->stepSize * stepDirection);
+
+    Serial.println(currentPos);
 
       boolean finished = false;
       digitalWrite(pin, HIGH);
@@ -57,6 +60,8 @@ void Motor::move(int _steps)	{
         }
       }
     }
+    
+    digitalWrite(pin, LOW);
   }
 }
 
@@ -110,7 +115,7 @@ void setup() {
   reset();
   Serial.begin(9600);
   delay(1000);
-  dreher.move(-100);
+  verbindung.move(-300);
  
 }
 
@@ -118,7 +123,7 @@ void loop () {
   //Serial.println(kipper.readPosition());
   //int light = analogRead(A5);
 
-  Serial.println(dreher.readPosition());
+ // Serial.println(dreher.readPosition());
 
 }
 
