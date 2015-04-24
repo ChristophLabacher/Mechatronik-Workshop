@@ -21,6 +21,7 @@ void setup() {
 void draw() {
   
   arduino.write('r');
+    arduino.write('i');
   arduino.write('-');
 
 }

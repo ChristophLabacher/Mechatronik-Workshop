@@ -1,5 +1,4 @@
 ///////////////////////////////////////// Motor ///////////////////////////////////////////////////////
-
 class Motor	{
   public:
     Motor(int _minPin = 0, int _maxPin = 0, int _min = 0, int _max = 100, int _input = A1);
@@ -51,16 +50,6 @@ void Motor::move(int _steps)	{
     currentPos = analogRead(this->input);
     targetDiff = currentPos - targetPos;
     targetDiffAbs = abs(targetDiff);
-
-    Serial.print("currentPos ");
-    Serial.println(currentPos);
-    Serial.print("targetPos ");
-    Serial.println(targetPos);
-    Serial.print("targetDiff ");
-    Serial.println(targetDiff);
-    Serial.print("targetDiffAbs ");
-    Serial.println(targetDiffAbs);
-    Serial.println("---");
   }
 
   digitalWrite(pin, LOW);
@@ -124,28 +113,27 @@ void setup() {
   //kipper.move(-50);
 }
 
-char value;
 int movement = 20;
 
 void loop () {
-  char buffer;
+  String value;
+  String buffer;
 
   while (Serial.available () > 0) {
     //read the incoming byte:
-    byte incomingByte = Serial.read();
+    char incomingByte = Serial.read();
 
     if (incomingByte != '-')  {
       // Add to buffer
       buffer += incomingByte;
     } else  {
       value = buffer;
-  
+      buffer = "";
     }
   }
-  
-  if (value == 'r')  {
+
+  if (value == "ri")  {
     kipper.move(movement);
     movement *= -1;
   }
-  Serial.println(value);
 }
